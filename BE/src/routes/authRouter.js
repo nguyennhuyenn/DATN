@@ -1,8 +1,11 @@
-import { Router } from "express";
-import { signin, signup } from "../controller/auth.js";
+// src/routes/authRouter.js
+const express = require("express");
+const { signup, signin } = require("../controller/auth"); // Import các hàm từ controller
 
-const authRouter = Router();
+const router = express.Router();
 
-authRouter.post("/signup", signup);
-authRouter.post("/signin", signin);
-export default authRouter;
+// Định nghĩa các route cho đăng ký và đăng nhập
+router.post("/register", signup);
+router.post("/login", signin);
+
+module.exports = router;
