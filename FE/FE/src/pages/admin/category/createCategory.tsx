@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import requestApi from "../../../helper/api";
 import { toast } from "react-toastify";
 import "../../../../public/assets/css/admin/createProduct.css";
 import { DeleteIcon, PlusCircle } from "lucide-react";
+import { LoaderContext } from "../../../hook/admin/contexts/loader";
 
 
 function CreateCategory() {
@@ -15,9 +16,9 @@ function CreateCategory() {
     const [prevImages, setPrevImages] = useState("")
     const inputRef = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<File>()
-    const [errorForm, setErrorForm] = useState({ name: "", imageCategory: "" })
+    const [errorForm, setErrorForm] = useState({ name: "", imageCategory: "", isSuccess: true })
     const [isSubmit, setIsSubmit] = useState(false)
-
+    const { setLoader } = useContext(LoaderContext);
 
     const navigate = useNavigate();
 
@@ -35,10 +36,23 @@ function CreateCategory() {
 
     useEffect(() => {
         if (isSubmit) {
-            const error = { ...errorForm }
-            error.name = formData.name ? "" : "Không được để trống"
+            setErrorForm(validForm)
         }
     }, [formData, isSubmit])
+
+    const validForm = () => {
+        const error = { name: "", imageCategory: "", isSuccess: true }
+        if (!formData.name) {
+            error.name = "Không được để trống"
+            error.isSuccess = false
+        }
+        if (!file) {
+            error.imageCategory = "Không được để trống"
+            error.isSuccess = false
+        }
+
+        return error
+    }
 
     const deleteFile = () => {
         setPrevImages("");
@@ -56,29 +70,47 @@ function CreateCategory() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmit(true)
+
+        const errorForm = validForm()
+        if (!errorForm.isSuccess) {
+            setErrorForm(errorForm)
+            toast.error("Vui lòng điền đủ các trường")
+            return
+        }
+
+        setLoader(true)
         if (file) {
             formData.imageCategory = await upload(file);
         }
         try {
-            await requestApi(`categories`, 'POST', formData);
+            await requestApi(`categories`, 'POST', formData, "application/json");
             toast.success("Tạo mới danh mục thành công")
 
         } catch (error) {
             console.error('Error fetching categories:', error);
             toast.error("create categories error")
         }
+        setLoader(false)
+
         navigate("/admin/categories");
     };
 
     const upload = async (file: File) => {
-        const formFile = new FormData();
-        formFile.append("image", file)
-        const dataUpload = await requestApi("upload", "POST", formFile, "multipart/form-data");
-        return dataUpload.data.imageUrl;
+        try {
+            const formFile = new FormData();
+            formFile.append("image", file)
+            const dataUpload = await requestApi("upload", "POST", formFile, "multipart/form-data");
+            return dataUpload.data.imageUrl;
+        } catch (error) {
+            console.error('Error fetching upload:', error);
+            toast.error("upload thất bại")
+            setLoader(false)
+        }
     }
 
     return (
-        <div className="container-full mt-5">
+        <div className="container-full">
             <h2>Thêm mới danh mục</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3 mt-5">
@@ -94,11 +126,13 @@ function CreateCategory() {
                                 className="form-control"
                                 value={formData.name}
                                 onChange={handleInputChange}
-                                required
                             />
                         </div>
                     </div>
 
+                    <p className=" text-danger">
+                        {errorForm.name}
+                    </p>
                 </div>
 
 
@@ -149,7 +183,9 @@ function CreateCategory() {
                                 />
                             </>
                     }
-
+                    <p className=" text-danger">
+                        {!prevImages && errorForm.imageCategory}
+                    </p>
                 </div>
 
                 <div className="mb-3">

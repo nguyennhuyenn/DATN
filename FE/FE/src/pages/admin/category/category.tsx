@@ -48,7 +48,7 @@ function CategoryList() {
         <>
             <div className="product-container">
                 <div className="product-header">
-                    <h1 className="product-title">Danh sách danh mụcmục</h1>
+                    <h1 className="product-title">Danh sách danh mục</h1>
                     <button className="add-product-btn" onClick={handleAddNew}>Thêm mới</button>
                 </div>
                 <table className="product-table">
