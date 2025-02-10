@@ -33,17 +33,14 @@ function CategoryList() {
     };
 
     const handleDelete = async (id: string) => {
-        if (window.confirm("Are you sure you want to delete this product?")) {
-            // Logic to delete product here
-            try {
-                await requestApi(`categories/${id}/toggle`, 'PATCH', {});
-                toast.success("delete success")
-                fetchData();
+        try {
+            await requestApi(`categories/${id}/toggle`, 'PATCH', {});
+            toast.success("Thay đổi trạng thái thành công")
+            fetchData();
 
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-                toast.error("delete error")
-            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            toast.error("delete error")
         }
     };
 
@@ -51,16 +48,16 @@ function CategoryList() {
         <>
             <div className="product-container">
                 <div className="product-header">
-                    <h1 className="product-title">Category List</h1>
-                    <button className="add-product-btn" onClick={handleAddNew}>Add New Category</button>
+                    <h1 className="product-title">Danh sách danh mụcmục</h1>
+                    <button className="add-product-btn" onClick={handleAddNew}>Thêm mới</button>
                 </div>
                 <table className="product-table">
                     <thead>
                         <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Active</th>
-                            <th>Actions</th>
+                            <th>Hình ảnh</th>
+                            <th>Tên danh mục</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,14 +65,14 @@ function CategoryList() {
                             <tr key={category.id}>
                                 <td><img src={category.imageCategory} alt={category.name} className="product-image" /></td>
                                 <td>{category.name}</td>
-                                <td>{category.active ? "Active" : "Inactive"}</td>
+                                <td>{category.active ? "Hoạt động" : "Ngừng hoạt động"}</td>
 
                                 <td>
                                     <button className="product-btn" onClick={() => handleEdit(category.id)}>
-                                        View Details
+                                        Xem chi tiết
                                     </button>
                                     <button className="product-delete-btn" onClick={() => handleDelete(category.id)}>
-                                        Delete
+                                        Thay đổi trạng thái
                                     </button>
                                 </td>
                             </tr>

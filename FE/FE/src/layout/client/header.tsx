@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 
 function Header() {
-
+    const location = useLocation();
+    const currentPath = location.pathname.split("/").filter(Boolean); // Loại bỏ chuỗi rỗng
 
     return (
         <>
@@ -57,31 +58,32 @@ https://www.tooplate.com/view/2114-pixie
                     </button>
                     <div className="collapse navbar-collapse" id="navbarResponsive">
                         <ul className="navbar-nav ml-auto">
-                            <li className="nav-item active">
+                            <li className={`nav-item ${currentPath.length == 0 && " active"}`}>
                                 <Link className="nav-link" to="/">
-                                    Home
+                                    Trang chủ
                                     <span className="sr-only">(current)</span>
                                 </Link>
                             </li>
-                            <li className="nav-item">
+                            <li className={`nav-item ${currentPath[0] == "products" && " active"}`}>
                                 <Link className="nav-link" to="/products">
-                                    Products
+                                    Sản phẩm
                                 </Link>
                             </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="about.html">
-                                    About Us
-                                </a>
+
+                            <li className={`nav-item ${currentPath[0] == "login" && " active"}`}>
+                                <Link className="nav-link" to="/login">
+                                    Đăng nhập
+                                </Link>
                             </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="contact.html">
-                                    Contact Us
-                                </a>
+                            <li className={`nav-item ${currentPath[0] == "register" && " active"}`}>
+                                <Link className="nav-link" to="/register">
+                                    Đăng kí
+                                </Link>
                             </li>
                         </ul>
                     </div>
                 </div>
-            </nav></>
+            </nav ></>
 
     );
 }

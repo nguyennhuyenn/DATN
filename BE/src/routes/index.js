@@ -2,7 +2,9 @@ const express = require("express");
 const authRouter = require("./authRouter");
 const productRouter = require("./product");
 const categoryRouter = require("./category");
-const cartRouter= require("./cart")
+const sizeRouter = require("./size");
+const colorRouter = require("./color");
+const uploadRouter = require("./uploadRouter");
 
 const router = express.Router();
 
@@ -15,6 +17,8 @@ router.get("/", (req, res) => {
 router.use("/auth", authRouter);
 router.use("/products", productRouter);
 router.use("/categories", categoryRouter);
-router.use("/cart",cartRouter);
+router.use("/colors", colorRouter);
+router.use("/sizes", sizeRouter);
+router.use("/upload", uploadRouter);
 
 module.exports = router;

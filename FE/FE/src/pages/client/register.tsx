@@ -31,7 +31,7 @@ const Register = () => {
             setIsLoad(false);
             await requestApi('auth/register', 'POST', registerData)
                 .then(res => {
-                    toast.success("Đăng ký thành công");
+                    toast.success("Register success")
                     navigate('/login');
                 }).catch(err => {
                     if (err.response && err.response.data) {
@@ -58,10 +58,9 @@ const Register = () => {
 
     return (<>
 
-
-        <section className="bg-light  p-xl-5">
+        <section className="bg-light my-5 p-xl-5">
             <div className="container min-vh-100 d-flex align-items-center justify-content-center">
-                <div className="row w -100">
+                <div className="row w-100">
                     <div className="col-12 col-xxl-11">
                         <div className="card border-light-subtle shadow-sm">
                             <div className="row g-0">
@@ -70,7 +69,7 @@ const Register = () => {
                                         className="img-fluid rounded-start w-100 h-100 object-fit-cover"
                                         loading="lazy"
                                         src="https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-ngay-moi-hanh-phuc-sieu-cute-inkythuatso-09-13-35-50.jpg"
-                                        alt="Chào mừng bạn trở lại!"
+                                        alt="Welcome back you've been missed!"
                                     />
                                 </div>
                                 <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
@@ -83,22 +82,19 @@ const Register = () => {
                                                             <a href="#!">
                                                                 <img
                                                                     src="./assets/img/bsb-logo.svg"
-                                                                    alt="Logo BootstrapBrain"
+                                                                    alt="BootstrapBrain Logo"
                                                                     width="175"
                                                                     height="57"
                                                                 />
                                                             </a>
                                                         </div>
-                                                        <h4 className="text-center">Chào mừng bạn trở lại!</h4>
+                                                        <h4 className="text-center">Welcome back you've been missed!</h4>
                                                     </div>
                                                 </div>
                                             </div>
                                             <form onSubmit={handleSubmit}>
                                                 <div className="row gy-3 overflow-hidden">
                                                     <div className="col-12">
-                                                        <label htmlFor="username" className="form-label">
-                                                            Tên đăng nhập
-                                                        </label>
                                                         <div className="form-floating mb-3">
                                                             <input
                                                                 type="text"
@@ -110,13 +106,13 @@ const Register = () => {
                                                                 placeholder="Nguyễn Nam"
                                                                 required
                                                             />
+                                                            <label htmlFor="email" className="form-label">
+                                                                Username
+                                                            </label>
                                                         </div>
                                                     </div>
 
                                                     <div className="col-12">
-                                                        <label htmlFor="email" className="form-label">
-                                                            Email
-                                                        </label>
                                                         <div className="form-floating mb-3">
                                                             <input
                                                                 type="email"
@@ -128,12 +124,12 @@ const Register = () => {
                                                                 placeholder="name@example.com"
                                                                 required
                                                             />
+                                                            <label htmlFor="email" className="form-label">
+                                                                Email
+                                                            </label>
                                                         </div>
                                                     </div>
                                                     <div className="col-12">
-                                                        <label htmlFor="phoneNumber" className="form-label">
-                                                            Số điện thoại
-                                                        </label>
                                                         <div className="form-floating mb-3">
                                                             <input
                                                                 type="text"
@@ -145,13 +141,13 @@ const Register = () => {
                                                                 placeholder="0123456789"
                                                                 required
                                                             />
+                                                            <label htmlFor="email" className="form-label">
+                                                                PhoneNumber
+                                                            </label>
                                                         </div>
                                                     </div>
 
                                                     <div className="col-12">
-                                                        <label htmlFor="password" className="form-label">
-                                                            Mật khẩu
-                                                        </label>
                                                         <div className="form-floating mb-3">
                                                             <input
                                                                 type="password"
@@ -160,15 +156,15 @@ const Register = () => {
                                                                 id="password"
                                                                 value={registerData.password}
                                                                 onChange={handleChange}
-                                                                placeholder="Mật khẩu"
+                                                                placeholder="Password"
                                                                 required
                                                             />
+                                                            <label htmlFor="password" className="form-label">
+                                                                Password
+                                                            </label>
                                                         </div>
                                                     </div>
                                                     <div className="col-12">
-                                                        <label htmlFor="confirmPassword" className="form-label">
-                                                            Xác nhận mật khẩu
-                                                        </label>
                                                         <div className="form-floating mb-3">
                                                             <input
                                                                 type="password"
@@ -177,13 +173,15 @@ const Register = () => {
                                                                 id="confirmPassword"
                                                                 value={registerData.confirmPassword}
                                                                 onChange={handleChange}
-                                                                placeholder="Xác nhận mật khẩu"
+                                                                placeholder="Password"
                                                                 required
                                                             />
+                                                            <label htmlFor="password" className="form-label">
+                                                                ConfirmPassword
+                                                            </label>
                                                         </div>
                                                     </div>
                                                     <div className="col-12">
-                                                        
                                                         <div className="form-check">
                                                             <input
                                                                 className="form-check-input"
@@ -192,12 +190,15 @@ const Register = () => {
                                                                 name="remember_me"
                                                                 id="remember_me"
                                                             />
+                                                            <label className="form-check-label text-secondary" htmlFor="remember_me">
+                                                                Keep me logged in
+                                                            </label>
                                                         </div>
                                                     </div>
                                                     <div className="col-12">
                                                         <div className="d-grid">
                                                             <button className="btn btn-dark btn-lg" type="submit">
-                                                                Đăng ký ngay
+                                                                Register now
                                                             </button>
                                                         </div>
                                                     </div>
@@ -207,10 +208,10 @@ const Register = () => {
                                                 <div className="col-12">
                                                     <div className="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center mt-5">
                                                         <Link to="/login" className="link-secondary text-decoration-none">
-                                                            Đăng nhập với tài khoản
+                                                            Login with account
                                                         </Link>
                                                         <a href="#!" className="link-secondary text-decoration-none">
-                                                            Quên mật khẩu
+                                                            Forgot password
                                                         </a>
                                                     </div>
                                                 </div>
