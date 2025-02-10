@@ -11,6 +11,37 @@
     width: 100%;
     transition: border-color 0.3s ease;
   }
+
+  .create-product  .custom-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    background-image: none;
+  }
+  
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+
+  .create-product .custom-input {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    transition: border-color 0.3s ease;
+    width: 90%;
+    max-width: 100%;
+    padding: 5px;
+  }
+  
+  .create-product  .custom-input:focus {
+    border-color: #000; /* Thay đổi màu khi focus */
+    box-shadow: none; /* Loại bỏ border xanh */
+  }
   
   .create-product select.form-select:focus {
     outline: none;

@@ -11,6 +11,40 @@ const getProducts = async (req, res) => {
   }
 };
 
+const getProductsPaginate = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, sort, ...filter } = req.query;
+    const skip = (page - 1) * limit;
+
+    // Xử lý sort query (mặc định không sort)
+    const sortOption = sort
+      ? { [sort.replace("-", "")]: sort.startsWith("-") ? -1 : 1 }
+      : {};
+
+    // Lấy danh sách sản phẩm với phân trang, lọc và sắp xếp
+    const products = await Product.find(filter)
+      .populate("category", "name")
+      .sort(sortOption)
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    // Đếm tổng số sản phẩm khớp với filter
+    const totalItems = await Product.countDocuments(filter);
+
+    res.json({
+      data: products,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalItems / limit),
+        totalItems,
+        limit: parseInt(limit),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Lấy sản phẩm theo ID
 const getProductById = async (req, res) => {
   try {
@@ -65,8 +99,6 @@ const createProduct = async (req, res) => {
 
 // Cập nhật sản phẩm
 const updateProduct = async (req, res) => {
-  console.log(req.body);
-
   try {
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -95,10 +127,23 @@ const toggleProductActive = async (req, res) => {
   }
 };
 
+const deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id); // Xóa product theo ID
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    res.json({ message: "Product deleted successfully" }); // Thông báo xóa thành công
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getProducts,
   getProductById,
   createProduct,
   updateProduct,
   toggleProductActive,
+  deleteProduct,
+  getProductsPaginate,
 };

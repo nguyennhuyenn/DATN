@@ -52,7 +52,7 @@ const Login = () => {
   };
 
   return (<>
-    <section className="bg-light  p-xl-5">
+    <section className="bg-light  my-5 p-xl-5">
       <div className="container min-vh-100 d-flex align-items-center justify-content-center">
         <div className="row w-100">
           <div className="col-12 col-xxl-11">
@@ -72,7 +72,7 @@ const Login = () => {
                       <div className="row">
                         <div className="col-12">
                           <div className="mb-5">
-                            <h4 className="text-center">Welcome back you've been missed!</h4>
+                            <h4 className="text-center">Chào mừng bạn đến với thương hiệu của chúng tôi ! </h4>
                           </div>
                         </div>
                       </div>
@@ -93,12 +93,12 @@ const Login = () => {
                                 placeholder="name@example.com"
                                 required
                               />
-                             
+                              
                             </div>
                           </div>
                           <div className="col-12">
                           <label htmlFor="password" className="form-label">
-                                Password
+                                Mật khẩu
                               </label>
                             <div className="form-floating mb-3">
                               <input
@@ -111,7 +111,7 @@ const Login = () => {
                                 placeholder="Password"
                                 required
                               />
-                            
+                              
                             </div>
                           </div>
                           <div className="col-12">
@@ -124,14 +124,14 @@ const Login = () => {
                                 id="remember_me"
                               />
                               <label className="form-check-label text-secondary" htmlFor="remember_me">
-                                Keep me logged in
+                              Show mật khẩu 
                               </label>
                             </div>
                           </div>
                           <div className="col-12">
                             <div className="d-grid">
-                              <button className="btn btn-dark btn-lg" type="submit">
-                                Log in now
+                              <button className="btn btn-dark btn-lg" type="submit"style={{backgroundColor:"blue"}}>
+                                Đăng nhập
                               </button>
                             </div>
                           </div>
@@ -141,10 +141,10 @@ const Login = () => {
                         <div className="col-12">
                           <div className="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center mt-5">
                             <Link to="/register" className="link-secondary text-decoration-none">
-                              Create new account
-                            </Link>
-                            <a href="#!" className="link-secondary text-decoration-none">
-                              Forgot password
+                             Bạn chưa có tài khoản 
+                            </Link>   
+                            <a  style={{margin:"0 16px"}}href="#!" className="link-secondary text-decoration-none">
+                              Quên mật khẩu 
                             </a>
                           </div>
                         </div>

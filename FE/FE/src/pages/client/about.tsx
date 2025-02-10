@@ -29,7 +29,7 @@ Tooplate 2114 Pixie
 https://www.tooplate.com/view/2114-pixie
 */}
   {/* Pre Header */}
-  <div id="pre-header">
+  {/* <div id="pre-header">
     <div className="container">
       <div className="row">
         <div className="col-md-12">
@@ -37,9 +37,9 @@ https://www.tooplate.com/view/2114-pixie
         </div>
       </div>
     </div>
-  </div>
+  </div> */}
   {/* Navigation */}
-  <nav className="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+  {/* <nav className="navbar navbar-expand-lg navbar-dark bg-dark static-top">
     <div className="container">
       <a className="navbar-brand" href="#">
         <img src="assets/images/header-logo.png" alt="" />
@@ -82,7 +82,7 @@ https://www.tooplate.com/view/2114-pixie
         </ul>
       </div>
     </div>
-  </nav>
+  </nav> */}
   {/* Page Content */}
   {/* About Page Starts Here */}
   <div className="about-page">

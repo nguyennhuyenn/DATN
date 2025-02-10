@@ -1,18 +1,20 @@
 export type { Category } from "./type/category";
-export type { SKU, ProductFormData } from "./type/product";
+export type { Size } from "./type/size";
+export type { Color } from "./type/color";
+export type {
+  SKU,
+  ProductFormData,
+  defaultValueProductFormData,
+} from "./type/product";
 
 export { setToken, getToken, removeToken } from "./localStorage/token";
 export {
-  validePhone,
-  validePassword,
+  validPhone,
+  validPassword,
   convertToSlug,
 } from "./validate/validateForm";
 export {
-  formatCurrency,
   formatTimeDifference,
   formatTime,
-  listTocpicCheckout,
-  topicCheckout,
-  classLableForm,
-  classInputForm,
+  formatCurrencyVND,
 } from "./format/format";

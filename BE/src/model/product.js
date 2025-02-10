@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 // Định nghĩa schema cho Product
 const productSchema = new mongoose.Schema(
@@ -23,7 +24,12 @@ const productSchema = new mongoose.Schema(
       trim: true,
     },
     colors: {
-      type: [String],
+      type: [
+        {
+          name: String,
+          image: String,
+        },
+      ],
       required: false,
     },
     sizes: {
@@ -55,6 +61,7 @@ const productSchema = new mongoose.Schema(
     },
   },
   {
+    timestamps: true,
     toJSON: {
       virtuals: true,
       transform: (_, ret) => {
@@ -71,6 +78,8 @@ const productSchema = new mongoose.Schema(
     },
   }
 );
+
+productSchema.plugin(mongoosePaginate);
 
 // Xuất model Product
 module.exports = mongoose.model("Product", productSchema);
