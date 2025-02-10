@@ -1,20 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import requestApi from "../../../helper/api";
 import { toast } from "react-toastify";
 import { ProductFormData, SKU } from "../../../util";
+import InforProductComponent from "./pages/inforProductComponent";
+import { LoaderContext } from "../../../hook/admin/contexts/loader";
+import { errorCreateProduct, validDataFormProduct } from "../../../util/validate/validateFormCreateDelivery";
+import SkuComponent from "./pages/skuComponent";
 
 
 const EditProduct = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-
     const [formData, setFormData] = useState<ProductFormData>({
         name: "",
         category: "",
         price: 0,
         description: "",
-        colors: [""],
+        colors: [{ name: "", image: "" }],
         sizes: [""],
         imageUrl: "",
         sku: [{ size: "", color: "", quantity: 0 }],
@@ -22,21 +25,21 @@ const EditProduct = () => {
         active: true,
     });
 
-    const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+    const [file, setFile] = useState<File>()
+    const [fileSku, setFileSku] = useState<{ file: File, name: string }[]>([])
+    const { setLoader } = useContext(LoaderContext);
+    const [errorForm, setErrorForm] = useState(errorCreateProduct)
+    const [isSubmit, setIsSubmit] = useState(false)
 
     useEffect(() => {
-        const fetchDataCategory = async () => {
-            try {
-                const res = await requestApi('categories', 'GET', {});
-                setCategories(res.data);
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            }
-        };
-
         const fetchDataProduct = async () => {
             try {
                 const res = await requestApi(`products/${id}`, 'GET', {});
+
+                console.log("product");
+                console.log(res.data);
+
+
                 const sku = res.data.sku.map((item: any) => {
                     return {
                         color: item.color,
@@ -48,27 +51,25 @@ const EditProduct = () => {
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
-        };
+            setLoader(false);
 
-        fetchDataCategory();
+        };
+        setLoader(true);
         fetchDataProduct();
 
     }, [id]);
 
-    console.log(formData);
-
-
-
     useEffect(() => {
         const generateSkuList = () => {
-            const skuList: SKU[] = [];
+            const skuList: SKU[] = [...formData.sku];
             formData.sizes.forEach(size => {
                 formData.colors.forEach(color => {
-                    const sku = formData.sku.find(item => {
-                        return item.color == color && item.size == size
-                    })
-
-                    skuList.push({ size, color, quantity: sku ? sku.quantity : 0 });
+                    const index = skuList.findIndex(item => item.size === size && item.color === color.name);
+                    if (index !== -1) {
+                        skuList[index] = { ...skuList[index], size, color: color.name };
+                    } else {
+                        skuList.push({ size, color: color.name, quantity: 0 });
+                    }
                 });
             });
             setFormData(prev => ({ ...prev, sku: skuList }));
@@ -77,277 +78,106 @@ const EditProduct = () => {
         generateSkuList();
     }, [formData.colors, formData.sizes]);
 
+    useEffect(() => {
+        if (isSubmit) {
+            setErrorForm(validDataFormProduct(formData))
+        }
+    }, [formData, isSubmit])
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: name === "price" ? parseFloat(value) : value });
-    };
 
-    const handleListChange = (index: number, field: string, value: string) => {
+    console.log(formData);
 
-        let sku: SKU[] = [{ size: "", color: "", quantity: 0 }]
-        formData.sizes.forEach(size => {
-            formData.colors.forEach(color => {
-                sku.push({ size, color, quantity: 0 })
-            })
-        })
-
-        setFormData((prev) => {
-            const updatedList = [...(prev[field as keyof typeof formData] as string[])];
-            updatedList[index] = value;
-            return { ...prev, [field]: updatedList, sku };
-        });
-    };
-
-    const addListItem = (field: string) => {
-        setFormData((prev) => ({
-            ...prev,
-            [field]: [...(prev[field as keyof typeof formData] as string[]), ""],
-        }));
-    };
-
-    const removeListItem = (index: number, field: string) => {
-        setFormData((prev) => {
-            const updatedList = [...(prev[field as keyof typeof formData] as string[])];
-            updatedList.splice(index, 1);
-            return { ...prev, [field]: updatedList };
-        });
-    };
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleSkuChange = (index: number, field: keyof SKU, value: string | number) => {
-        setFormData((prev) => {
-            const updatedSku = [...prev.sku];
-            updatedSku[index] = { ...updatedSku[index], [field]: value };
-            return { ...prev, sku: updatedSku };
-        });
-    };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmit(true)
+        const error = validDataFormProduct({ ...formData, imageUrl: file ? "file" : formData.imageUrl })
 
-        try {
-            await requestApi(`products/${id}`, 'PUT', formData);
-            toast.success("update product success")
-
-        } catch (error) {
-            console.error('Error fetching products:', error);
-            toast.error("update product error")
+        if (!error.isSuccess) {
+            setErrorForm(error)
+            toast.error("Vui lòng nhập đúng các trường")
+            return
         }
-        navigate("/admin/products");
+
+        setLoader(true);
+        const formCreate = await uploadFiles()
+
+        console.log("formCreate");
+        console.log(formCreate);
+
+        if (formCreate) {
+            try {
+                await requestApi(`products/${id}`, 'PUT', formCreate, "application/json");
+                toast.success("Cập nhật sản phẩm thành công")
+
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                toast.error("cập nhật sản phẩm thất bại")
+            }
+            navigate("/admin/products");
+        }
+        setLoader(false);
+
     };
 
+    const uploadFiles = async () => {
+        const formCreate = { ...formData };
+        try {
+            // Upload ảnh chính
+            if (file) {
+                formCreate.imageUrl = await upload(file);
+            }
+
+            // Upload ảnh cho SKU
+            if (fileSku.length > 0) {
+                fileSku.forEach(async (item) => {
+                    const image = await upload(item.file)
+                    const index = formCreate.colors.findIndex((itemForm) => item.name === itemForm.name)
+                    formCreate.colors[index].image = image
+                })
+            }
+
+            return formCreate
+        } catch (error) {
+            console.error("Upload error:", error);
+            toast.error("Upload failed!");
+        }
+    }
+
+    const upload = async (file: File) => {
+        const formFile = new FormData();
+        formFile.append("image", file)
+        const dataUpload = await requestApi("upload", "POST", formFile, "multipart/form-data");
+        return dataUpload.data.imageUrl;
+    }
+
+
     return (
-        <div className="container mt-5 create-product">
-            <h2>Create New Product</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="row mb-3">
-                    <div className="col-md-6">
-                        <label htmlFor="name" className="form-label">
-                            Product Name
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            className="form-control"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
+        <div className="container-full create-product">
+            <h1 className="product-title pb-4 mb-4">Cập nhật sản phẩm</h1>
+            <form onSubmit={handleSubmit} className=" needs-validation" noValidate>
 
-                    <div className="col-md-6">
-                        <label htmlFor="price" className="form-label">
-                            Price
-                        </label>
-                        <input
-                            type="number"
-                            id="price"
-                            name="price"
-                            className="form-control"
-                            value={formData.price}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </div>
-
+                <div>
+                    <InforProductComponent
+                        formData={formData}
+                        setFormData={setFormData}
+                        setFile={setFile}
+                        errorForm={errorForm}
+                    />
                 </div>
 
-                <div className="row mb-3">
-                    <div className="col-md-6">
-                        <label htmlFor="category" className="form-label">
-                            Category
-                        </label>
-                        <select
-                            id="category"
-                            name="category"
-                            className="form-select"
-                            value={formData.category}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Select Category</option>
-                            {categories.map((cat) => (
-                                <option key={cat.id} value={cat.id}>
-                                    {cat.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                <div>
+                    <SkuComponent
+                        formData={formData}
+                        setFormData={setFormData}
+                        setFileSku={setFileSku}
+                        errorForm={errorForm}
 
-                    <div className="col-md-6">
-                        <label htmlFor="description" className="form-label">
-                            Description
-                        </label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            className="form-control"
-                            value={formData.description}
-                            onChange={handleInputChange}
-                        />
-                    </div>
+                    />
                 </div>
 
-
-                <div className="row mb-3">
-                    <div className="col-md-6">
-                        <label className="form-label">Colors</label>
-                        {formData.colors.map((color, index) => (
-                            <div key={index} className="d-flex mb-2">
-                                <input
-                                    type="text"
-                                    className="form-control me-2"
-                                    value={color}
-                                    onChange={(e) => handleListChange(index, "colors", e.target.value)}
-                                />
-                                <button
-                                    type="button"
-                                    className="btn btn-danger"
-                                    onClick={() => removeListItem(index, "colors")}
-                                >
-                                    Remove
-                                </button>
-                            </div>
-                        ))}
-                        <button type="button" className="btn btn-primary" onClick={() => addListItem("colors")}>
-                            Add Color
-                        </button>
-                    </div>
-
-                    <div className="col-md-6">
-                        <label className="form-label">Sizes</label>
-                        {formData.sizes.map((size, index) => (
-                            <div key={index} className="d-flex mb-2">
-                                <input
-                                    type="text"
-                                    className="form-control me-2"
-                                    value={size}
-                                    onChange={(e) => handleListChange(index, "sizes", e.target.value)}
-                                />
-                                <button
-                                    type="button"
-                                    className="btn btn-danger"
-                                    onClick={() => removeListItem(index, "sizes")}
-                                >
-                                    Remove
-                                </button>
-                            </div>
-                        ))}
-                        <button type="button" className="btn btn-primary" onClick={() => addListItem("sizes")}>
-                            Add Size
-                        </button>
-                    </div>
-                </div>
-
-                <div className="mb-3">
-                    <label className="form-label">SKU Details</label>
-                    {formData.sku.map((skuItem, index) => (
-                        <div key={index} className="d-flex align-items-center mb-2">
-                            <input
-                                type="text"
-                                className="form-control m-2"
-                                placeholder="Size"
-                                value={skuItem.size}
-                                onChange={(e) => handleSkuChange(index, "size", e.target.value)}
-                            />
-                            <input
-                                type="text"
-                                className="form-control m-2"
-                                placeholder="Color"
-                                value={skuItem.color}
-                                onChange={(e) => handleSkuChange(index, "color", e.target.value)}
-                            />
-                            <input
-                                type="number"
-                                className="form-control m-2"
-                                placeholder="Quantity"
-                                value={skuItem.quantity}
-                                onChange={(e) => handleSkuChange(index, "quantity", Number(e.target.value))}
-                            />
-                        </div>
-                    ))}
-                </div>
-
-                <div className="row mb-3">
-
-                    <div className="col-md-6">
-                        <label htmlFor="type" className="form-label">
-                            Product Type
-                        </label>
-                        <select
-                            id="type"
-                            name="type"
-                            className="form-control"
-                            value={formData.type}
-                            onChange={handleInputChange}
-                        >
-                            <option value="quần">Quần</option>
-                            <option value="áo">Áo</option>
-                            <option value="combo">Combo</option>
-                        </select>
-                    </div>
-
-                    <div className="col-md-6">
-                        <label htmlFor="imageUrl" className="form-label">
-                            Image URL
-                        </label>
-                        <input
-                            type="text"
-                            id="imageUrl"
-                            name="imageUrl"
-                            className="form-control"
-                            value={formData.imageUrl}
-                            onChange={handleInputChange}
-                        />
-
-                        <img src={formData.imageUrl} alt="" style={{ "maxWidth": "200px", "padding": "10px 0" }} />
-                    </div>
-
-                </div>
-
-
-                <div className="mb-3">
-                    <div className="form-check">
-                        <input
-                            type="checkbox"
-                            id="active"
-                            name="active"
-                            className="form-check-input"
-                            checked={formData.active}
-                            onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                        />
-                        <label className="form-check-label" htmlFor="active">
-                            Active
-                        </label>
-                    </div>
-                </div>
-
-                <button type="submit" className="btn btn-success">
-                    Create Product
-                </button>
+                {<button type="submit" className="btn btn-success">
+                    Cập nhật sản phẩm
+                </button>}
             </form>
         </div>
     );

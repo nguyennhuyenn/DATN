@@ -1,0 +1,67 @@
+/* Logo xanh kéo dài nhưng có khoảng cách với lề trái */
+.logo-container {
+    background-color: #dee8f2; /* Màu xanh */
+  height: 50px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  
+   
+}
+.container-fluid{
+    min-height: 100px;
+}
+
+.logo-container .navbar-brand img {
+    height: 40px;
+    float: left;
+}
+
+/* Căn chỉnh biểu tượng giỏ hàng và người dùng */
+.header-icons {
+    position: absolute;
+    right: 60px; /* Giữ khoảng cách hợp lý với lề phải */
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.icon {
+    cursor: pointer;
+    color: white;
+    position: relative;
+}
+
+/* Menu user hover */
+.user-menu {
+    position: relative;
+}
+
+/* Định dạng dropdown menu của user */
+.user-dropdown {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background: white;
+    color: black;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    width: 120px;  /* Đặt chiều rộng tối thiểu để không bị xuống dòng */
+    white-space: nowrap;  /* Ngăn text bị xuống dòng */
+}
+
+.user-dropdown a {
+    text-decoration: none;
+    color: black;
+    padding: 8px 15px;  /* Giữ khoảng cách đều giữa các chữ */
+    transition: background 0.3s;
+    text-align: center;  /* Căn giữa text */
+}
+
+.user-dropdown a:hover {
+    background: #872828;
+}
+
