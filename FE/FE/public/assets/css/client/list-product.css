@@ -1,0 +1,27 @@
+.row-product .item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    height: 100%; /* Cho phần tử đầy chiều cao cột */
+  }
+  
+  .row-product  .featured-item {
+    text-align: center;
+  }
+  
+  .row-product  .featured-item img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    display: block;
+    border-radius: 4px;
+  }
+  
+  .row-product  .item h4, .item h6 {
+    margin: 10px 0;
+  }
+  

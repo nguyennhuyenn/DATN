@@ -52,7 +52,7 @@ const Login = () => {
   };
 
   return (<>
-    <section className="bg-light  p-xl-5">
+    <section className="bg-light  my-5 p-xl-5">
       <div className="container min-vh-100 d-flex align-items-center justify-content-center">
         <div className="row w-100">
           <div className="col-12 col-xxl-11">
@@ -79,9 +79,6 @@ const Login = () => {
                       <form onSubmit={handleSubmit}>
                         <div className="row gy-3 overflow-hidden">
                           <div className="col-12">
-                          <label htmlFor="email" className="form-label">
-                                Email
-                              </label>
                             <div className="form-floating mb-3">
                               <input
                                 type="email"
@@ -93,13 +90,12 @@ const Login = () => {
                                 placeholder="name@example.com"
                                 required
                               />
-                             
+                              <label htmlFor="email" className="form-label">
+                                Email
+                              </label>
                             </div>
                           </div>
                           <div className="col-12">
-                          <label htmlFor="password" className="form-label">
-                                Password
-                              </label>
                             <div className="form-floating mb-3">
                               <input
                                 type="password"
@@ -111,7 +107,9 @@ const Login = () => {
                                 placeholder="Password"
                                 required
                               />
-                            
+                              <label htmlFor="password" className="form-label">
+                                Password
+                              </label>
                             </div>
                           </div>
                           <div className="col-12">

@@ -10,7 +10,7 @@ export default function AdminLayout() {
 
             {/* Main Content */}
             <main className="main-content position-relative w-100 h-100 border-radius-lg">
-                <div className="container-fluid py-4">
+                <div className="container-fluid p-5">
                     <Outlet />
                 </div>
             </main>

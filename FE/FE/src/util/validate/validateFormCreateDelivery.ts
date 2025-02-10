@@ -1,35 +1,65 @@
-import { deliveryAddress } from "../type/deliveryAddress";
+import { ProductFormData } from "../type/product";
 
-export function checkDataFormCareateDelivery(data:deliveryAddress){
-    const error: deliveryAddress = {} as deliveryAddress;
-    error.address = {
-        address:"",
-        idDistrict :"",
-        idProvince: "",
-        idWard: ""
+export interface errorProduct {
+  name: string;
+  category: string;
+  price: string;
+  description: string;
+  colors: string;
+  sizes: string;
+  imageUrl: string;
+  isSuccess: boolean;
+}
+
+export const errorCreateProduct: errorProduct = {
+  name: "",
+  category: "",
+  price: "",
+  description: "",
+  colors: "",
+  sizes: "",
+  imageUrl: "",
+  isSuccess: true,
+};
+
+export function validDataFormProduct(data: ProductFormData) {
+  const error: errorProduct = {
+    name: "",
+    category: "",
+    price: "",
+    description: "",
+    colors: "",
+    sizes: "",
+    imageUrl: "",
+    isSuccess: true,
+  };
+
+  const requiredFields: (keyof ProductFormData)[] = [
+    "name",
+    "category",
+    "description",
+    "imageUrl",
+  ];
+
+  // Kiểm tra trường bắt buộc
+  requiredFields.forEach((field) => {
+    if (!data[field]) {
+      (error[field as keyof errorProduct] as string) = "Không được bỏ trống";
+      error.isSuccess = false;
     }
-    error.isDefault = false
-    if(data.name == ''){
-        error.name = 'Vui lòng điền tên'
-        error.isDefault = true
-    }else {
-        error.name = ''
-    }
-    if (!data.phone) {
-        error.phone =  'Vui lòng nhập số điện thoại';
-        error.isDefault = true
-    }else if (!/^\d{10}$/.test(data.phone)) {
-        error.phone =  'Vui lòng nhập đúng định dạng số điện thoại';
-        error.isDefault = true
-    }else {
-        error.phone = ''
-    }
-    
-    if(!data.address.idWard || !data.address.address){
-        error.address.address = 'Vui lòng điền địa chỉ'
-        error.isDefault = true
-    }else {
-        error.address.address = ''
-    }
-    return error
+  });
+
+  // Kiểm tra mảng sizes
+  if (!data.sizes.length || data.sizes.some((item) => !item)) {
+    error.sizes = "Không được bỏ trống";
+    error.isSuccess = false;
+  }
+
+  // Kiểm tra mảng colors
+  if (!data.colors.length || data.colors.some((item) => !item.name)) {
+    error.colors = "Không được bỏ trống";
+    error.isSuccess = false;
+  }
+
+  return error;
 }

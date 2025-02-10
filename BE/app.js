@@ -16,7 +16,7 @@ app.use(express.json()); // Để nhận dữ liệu JSON trong body
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "*",
   })
 );
 
